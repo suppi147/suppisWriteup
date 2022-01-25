@@ -4,7 +4,14 @@
 <body style="background-color:powderblue";>
 	<h1 style="font-size:60px;font-family:Courier New;">Pandora machine Security Hole<sub style="font-size:13px">by suppi</sub></h1>
 	<b style="font-family:courier;">Staring point:</b>
-    <p style="font-family:courier;">Yeah yeah I crawl, do nmap but I did't find any admin page or serious security problems. However, at the end of page there is a get form with html... Well let me see what I can do.</p>
+    <p style="font-family:courier;">Yeah yeah I crawl, do nmap but I did't find any admin page or serious security problems. However, at the end of page there is a get form with html... Well let me see what I can do.<br> So on, html injection can do shit so I do a small nmap search and find out an ssh connection to the server, hopefully I can make it there by this way :v.</p>
+    <img src="ssh1.png" width="1280" height="720">
+    <p style="font-family:courier;">Now I gonna make some reseach about these meterials. Well looks what I found openssh 8.2p1 ubuntu 4ubuntu0.3 is exploitable but what more matter is how we do it in way that we can learn. In another way, we can use metaploit but Im not recommend(later I will light this shit up).<br> Yo I just found a way to scan nmap with vuln script and about to test it out. And the command</p>
+    <i style="font-family:courier;">suppie@suppies-parrot: nmap -sV --script vuln -p22 10.129.220.132</i>
+    <img src="ssh2.png" width="1280" height="720">
+    <p style="font-family:courier;">This hole called CVE-2020-15778 its basically "DISPUTED scp in OpenSSH through 8.3p1 allows command injection in the scp.c toremote function, as demonstrated by backtick characters in the destination argument." Now it time to break this down.<br> openSSH scp is a program for copying files between computers. It uses the SSH protocol. It is included by default in most Linux and Unix distributions. It is also included in the Tectia SSH and OpenSSH packages.</p>
+    
+ <!--
 	<i style="font-family:courier;">suppie@suppies-parrot: sudo openvpn academy.ovpn<br></i>
 	<b style="font-family:courier;">___Enumeration___</b>
 	<p style="font-family:courier;">Port scanning by nmap</p>
