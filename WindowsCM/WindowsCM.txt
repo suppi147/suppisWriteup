@@ -1,0 +1,2 @@
++ Find out windows version and stuffs
+  Get-WmiObject -Class win32_OperatingSystem
