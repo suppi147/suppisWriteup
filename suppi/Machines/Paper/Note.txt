@@ -13,4 +13,13 @@
   searchsploit -p 47690
   // give in4 about the security hole
   access the hole we will file chat.office. then add it to host address
-  
+- script dev null -c bash  
+  //enable reverse shellface
+- 
+stty raw -echo; fg
+reset
+xterm
+ //reconnect reverse shell
+- export TERM=xterm
+  export SHELL=BASH
+ // shell can't be 
