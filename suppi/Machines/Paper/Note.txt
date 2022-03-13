@@ -1,0 +1,16 @@
+- we can ping to server if ttl=63 means linux machine
+-nmap -p- --open -T5 -v -n 10.10.11.143 -oN allPorts
+ // T1->T5 for increase speed accurate decrease, -n to stop dns resolution, -oN output scan normal
+- Whatweb 10.10.11.143
+  check for web in4
+- nmap -sCV -p22,80,443 10.10.11.143
+  check for service in4, and use default script for scanning
+-curl --head 10.10.11.143
+  check for header
+-nano /etc/hosts
+ add 10.10.11.143 with subdomain name to access
+- searchsploit wordpress 5.2.3
+  searchsploit -p 47690
+  // give in4 about the security hole
+  access the hole we will file chat.office. then add it to host address
+  
