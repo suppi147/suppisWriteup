@@ -3,3 +3,7 @@
 - CVE-2021-4034
   https://www.whitesourcesoftware.com/resources/blog/polkit-pkexec-vulnerability-cve-2021-4034/
   https://www.thesecmaster.com/how-to-fix-the-polkit-privilege-escalation-vulnerability-cve-2021-4034/
+- CVE-2021-3650
+  https://suppi147.github.io/suppisWriteup/suppi/CVEs/CVE-2021-3560/Handy/pass.sh
+  https://suppi147.github.io/suppisWriteup/suppi/CVEs/CVE-2021-3560/Handy/usr.sh
+  https://suppi147.github.io/suppisWriteup/suppi/CVEs/CVE-2021-3560/Shelly/p.sh
