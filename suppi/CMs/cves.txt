@@ -7,3 +7,5 @@
   https://suppi147.github.io/suppisWriteup/suppi/CVEs/CVE-2021-3560/Handy/pass.sh
   https://suppi147.github.io/suppisWriteup/suppi/CVEs/CVE-2021-3560/Handy/usr.sh
   https://suppi147.github.io/suppisWriteup/suppi/CVEs/CVE-2021-3560/Shelly/p.sh
+- CVE-2019-17671
+  https://www.exploit-db.com/exploits/47690

@@ -455,3 +455,5 @@
 + put bash into tar and execute it
   echo "bin/bash" > /tmp/tar
   chmod +x /tmp/var
+
++ zip -r k.zip folder
